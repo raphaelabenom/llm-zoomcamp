@@ -1,1 +1,1 @@
-# llm-zoomcamp
+# Repository of LLM Zoomcamp classes
