@@ -1,6 +1,5 @@
 
 # %%
-
 # Importing the required libraries
 import openai
 from openai import OpenAI
@@ -11,7 +10,6 @@ import os
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # %%
-
 client.chat.completions.create(
   model="gpt-3.5-turbo",
   messages=[
@@ -21,6 +19,4 @@ client.chat.completions.create(
   )
 
 # %%
-
-response.choice[0]['message']['content'] 
 response.choice[0].message.content
