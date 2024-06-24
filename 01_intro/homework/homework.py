@@ -1,5 +1,6 @@
 
 # %%
+import tiktoken
 from tqdm.auto import tqdm
 from elasticsearch import Elasticsearch
 import requests 
@@ -134,3 +135,8 @@ formatted_prompt = build_prompt(query, search)
 
 formatted_prompt
 
+
+#%%
+# Q6
+encoding = tiktoken.encoding_for_model("gpt-4o")
+len(encoding.encode(formatted_prompt))
