@@ -1,5 +1,6 @@
 # %%
 from openai import OpenAI
+from tqdm.auto import tqdm
 from elasticsearch import Elasticsearch
 import minsearch
 import json
@@ -114,7 +115,12 @@ documents[0]
 
 es_client = Elasticsearch('http://localhost:9200') 
 
+es_client.info()
+
 # %%
+
+# Index in elastic search is similar to a table in a database
+
 index_settings = {
     "settings": {
         "number_of_shards": 1,
@@ -138,30 +144,29 @@ es_client.indices.create(index=index_name, body=index_settings)
 documents[0]
 
 # %%
-from tqdm.auto import tqdm
-
+# Indexing documents in Elasticsearch
 for doc in tqdm(documents):
     es_client.index(index=index_name, document=doc)
 
 # %%
-query = 'I just disovered the course. Can I still join it?'
+query = "How do I execute a command in a running docker container?"
 
 # %%
 def elastic_search(query):
     search_query = {
-        "size": 5,
+        "size": 5, # first 5 results
         "query": {
-            "bool": {
-                "must": {
-                    "multi_match": {
-                        "query": query,
-                        "fields": ["question^3", "text", "section"],
-                        "type": "best_fields"
+            "bool": { # bool is used to combine multiple queries
+                "must": { # must is like an AND clause in SQL
+                    "multi_match": { # multi_match is used to search in multiple fields
+                        "query": query, # search query
+                        "fields": ["question^4", "text", "section"], # fields to search, with question having higher weight with ^3. Meaning it is 3 times more important than the other fields
+                        "type": "best_fields" # best_fields means that the score of the best matching field will be used
                     }
                 },
-                "filter": {
+                "filter": { # filter by course, is like a WHERE clause in SQL
                     "term": {
-                        "course": "data-engineering-zoomcamp"
+                        "course": "data-engineering-zoomcamp" # filter by course name
                     }
                 }
             }
@@ -173,11 +178,17 @@ def elastic_search(query):
     result_docs = []
     
     for hit in response['hits']['hits']:
-        result_docs.append(hit['_source'])
+        result_docs.append(hit['_score']) # '_source' contains the document
     
     return result_docs
 
+#%%
+# Search in Elasticsearch - printing the score of the search results
+search = elastic_search(query)
+print(search)
+
 # %%
+
 def rag(query):
     search_results = elastic_search(query)
     prompt = build_prompt(query, search_results)
@@ -185,3 +196,4 @@ def rag(query):
     return answer
 
 rag(query)
+# %%
