@@ -27,3 +27,10 @@ pip install tqdm notebook==7.1.2 openai elasticsearch pandas scikit-learn
 ```bash
 Export OPENAI_API_KEY="YOUR KEY"
 ```
+
+Tips for convert:
+
+```bash
+jupyter nbconvert --to script starter.ipynb
+
+```

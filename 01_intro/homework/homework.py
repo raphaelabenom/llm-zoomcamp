@@ -130,11 +130,8 @@ CONTEXT:
     return prompt
 
 # %%
-
 formatted_prompt = build_prompt(query, search)
-
 formatted_prompt
-
 
 #%%
 # Q6
